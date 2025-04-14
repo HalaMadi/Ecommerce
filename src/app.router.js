@@ -16,10 +16,3 @@ const initApp = async (app, express) => {
 }
 
 export default initApp
-
-
-
-
-// app.all('*', (req, res) => {
-//     return res.status(404).json({ message: 'Page not found' });
-// });
