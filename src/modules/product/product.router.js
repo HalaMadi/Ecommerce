@@ -1,9 +1,14 @@
 import { Router } from "express";
-import * as controller  from './category.controller.js'
 import { auth } from "../../middleware/auth.js";
-const router =Router();
+import * as controller from './product.controller.js'
+import fileUpload, { fileValidation } from "../../utils/multer.js";
+const router = Router()
 
-router.post('/',auth(['admin']),controller.create)
+
+router.post('/', auth(['admin']), fileUpload(fileValidation.Image).fields([
+    { name: 'mainImage', maxCount: 1 },
+    { name: 'subImages', maxCount: 4 }
+]), controller.create)
 router.get('/active',controller.getActive)
 router.get('/',auth(['admin']),controller.get)
 router.get('/:id',controller.details)
