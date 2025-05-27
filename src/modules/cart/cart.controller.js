@@ -6,8 +6,9 @@ export const addToCart = async (req, res) => {
     if (!cart) {
         const newCart = await cartModel.create({
             userId: req.id,
-            products: { productId }
+            products: [{ productId }]
         });
+        return res.status(201).json({ message: 'Add to cart success', cart: newCart })
     }
     for (let i = 0; i < cart.products.length; i++) {
         if (cart.products[i].productId == productId) {

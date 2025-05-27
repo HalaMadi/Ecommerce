@@ -8,7 +8,7 @@ export const register = async (req, res, next) => {
         const { userName, email, password } = req.body;
         const existingUser = await userModel.findOne({ email });
         if (existingUser) {
-            return res.status(409).json({ message: 'Email already exists' });
+            return res.status(409).json({ message: 'Email already exists' }); 
         }
         const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUND));
         const newUser = await userModel.create({
@@ -51,13 +51,13 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     const user = await userModel.findOne({ email });
     if (!user) {
-        return res.status(400).json({ message: 'Invalid data' });
+        return res.status(400).json({ message: 'User not found' });
     }
     if (!user.confirmEmail) {
         return res.status(400).json({ message: 'Please confirm your email' });
     }
     if (user.status == 'not_active') {
-        return res.status(400).json({ message: 'your account is blocked' });
+        return res.status(400).json({ message: 'Your account is blocked' });
     }
     const match = await bcrypt.compare(password, user.password)
     if (!match) {
@@ -86,7 +86,7 @@ export const resetPassword = async (req, res) => {
     if (!user) {
         return res.status(400).json({ message: 'Account not registered' });
     }
-    if (user.sendCode != code) {
+    if (user.sendCode !== code) {
         return res.status(400).json({ message: 'Invalid data' });
     }
     const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUND));

@@ -4,7 +4,7 @@ import categoryModel from "../../../DB/model/category.model.js"
 import cloudinary from "../../utils/cloudinary.js"
 
 export const create = async (req, res) => {
-    const { name, categoryId } = req.body
+    const { name, categoryId, discount, price } = req.body
     const checkCategory = await categoryModel.findById(categoryId);
     if (!checkCategory) {
         return res.status(404).json({ message: 'Category Not found' })
@@ -22,12 +22,13 @@ export const create = async (req, res) => {
             req.body.subImages.push({ secure_url, public_id })
         }
     }
+
     req.body.mainImage = { secure_url, public_id }
     req.body.createBy = req.id
     req.body.updatedBy = req.id
-
+    req.body.finalPrice = price - (price * (discount || 0) / 100);
     const product = await productModel.create(req.body)
-    return res.status(201).json({ message: 'Product Created Successfully' }, product)
+    return res.status(201).json({ message: 'Product Created Successfully', product })
 }
 
 export const get = async (req, res) => {
