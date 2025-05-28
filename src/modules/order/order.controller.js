@@ -20,6 +20,7 @@ export const create = async (req, res) => {
         if (coupon.usedBy.includes(req.id)) {
             return res.status(400).json({ message: 'coupon already used' })
         }
+        req.body.coupon = coupon;
     }
     let finalProducts = [];
     let subTotal = 0;
@@ -32,7 +33,7 @@ export const create = async (req, res) => {
             return res.status(404).json({ message: `Product with id ${product.productId} not found or out of stock` })
         }
         product = product.toObject();
-        product.name = checkProduct.name;
+        product.productName = checkProduct.name;
         product.unitPrice = checkProduct.finalPrice;
         product.finalPrice = checkProduct.finalPrice * product.quantity;
         subTotal += product.finalPrice;
@@ -44,11 +45,29 @@ export const create = async (req, res) => {
     const order = await orderModel.create({
         UserId: req.id,
         Products: finalProducts,
-        finalPrice: subTotal,
+        finalPrice: subTotal - (subTotal * (req.body.coupon.amount || 0) / 100),
         phoneNumber: req.body.phoneNumber,
         address: req.body.address,
         couponName: couponName ?? '',
     });
+    for (const product of cart.products) {
+        await productModel.updateOne(
+            { _id: product.productId },
+            { $inc: { stock: -product.quantity } }
+        )
+    }
+    // If a coupon was used, update the coupon's usedBy field
+    if (req.body.coupon) {
+        await couponModel.updateOne(
+            { _id: req.body.coupon._id },
+            { $addToSet: { usedBy: req.id } }
+        );
+    }
+    // Clear the cart after order creation
+    await cartModel.updateOne(
+        { userId: req.id },
+        { $set: { products: [] } }
+    );
     await cartModel.findOneAndDelete({ userId: req.id });
     return res.status(201).json({ message: 'Order created successfully', order });
 }

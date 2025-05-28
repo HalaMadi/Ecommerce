@@ -39,7 +39,7 @@ const orderSchema = new Schema({
     paymentType: {
         type: String,
         default: 'cash',
-        enum: ['cart', 'card'],
+        enum: ['cash', 'card'],
     },
     phoneNumber: {
         type: String,
@@ -54,8 +54,12 @@ const orderSchema = new Schema({
         default: 'pending',
         enum: ['pending', 'cancelled', 'confirmed', 'onWay', 'delivered'],
     },
-    note: string,
-    reasonRejected: String,
+    note: {
+        type: String
+    },
+    reasonRejected: {
+        type: String
+    },
     updatedBy: {
         type: Types.ObjectId,
         ref: 'User'
