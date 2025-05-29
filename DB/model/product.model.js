@@ -62,7 +62,14 @@ const productSchema = new Schema({
         enum: ['small', 'medium', 'large', 'xlarge']
     }]
 }, {
-    timestamps: true
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
 })
+productSchema.virtual('reviews', {
+    ref: 'Review',
+    localField: '_id',
+    foreignField: 'productId'
+});
 const productModel = mongoose.models.Product || model('Product', productSchema);
-export default productModel
+export default productModel;

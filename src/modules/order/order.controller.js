@@ -45,7 +45,7 @@ export const create = async (req, res) => {
     const order = await orderModel.create({
         UserId: req.id,
         Products: finalProducts,
-        finalPrice: subTotal - (subTotal * (req.body.coupon.amount || 0) / 100),
+        finalPrice: subTotal - (subTotal * (req.body.coupon?.amount || 0) / 100),
         phoneNumber: req.body.phoneNumber,
         address: req.body.address,
         couponName: couponName ?? '',
@@ -99,7 +99,7 @@ export const updateStatus = async (req, res) => {
     if (!order) {
         return res.status(404).json({ message: 'Order not found' });
     }
-    if (status == 'delivered') {
+    if (order.status === 'delivered' && status === 'cancelled') {
         return res.status(400).json({ message: 'can\'t cancel delivered orders' });
     }
     order.status = req.body.status;
