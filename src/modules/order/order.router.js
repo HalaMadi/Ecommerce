@@ -5,5 +5,8 @@ const router =Router()
 
 
 router.post('/',auth(['user']),controller.create)
+router.get('/', auth(['user']), controller.getAll)
+router.get('/:status', auth(['admin']), controller.getByStatus)
+router.patch('/:id', auth(['admin']), controller.updateStatus)
 
 export default router

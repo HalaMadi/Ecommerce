@@ -6,6 +6,7 @@ import productRouter from './modules/product/product.router.js'
 import couponRouter from './modules/coupon/coupon.router.js'
 import cartRouter from './modules/cart/cart.router.js'
 import orderRouter from './modules/order/order.router.js'
+import reviewsRouter from './modules/review/review.router.js'
 const initApp = async (app, express) => {
     app.use(express.json());
     app.use(cors());
@@ -15,10 +16,12 @@ const initApp = async (app, express) => {
     })
     app.use('/auth', authRouter)
     app.use('/categories', categoryRouter)
-    app.use('/products',productRouter)
-    app.use('/coupons',couponRouter)
-    app.use('/carts',cartRouter)
-    app.use('/orders',orderRouter)
+    app.use('/products', productRouter)
+    app.use('/coupons', couponRouter)
+    app.use('/carts', cartRouter)
+    app.use('/orders', orderRouter)
+    app.use('/reviews', reviewsRouter)
+
 
 
 }
